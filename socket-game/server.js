@@ -10,6 +10,7 @@ app.get("/", function (request, response) {
 
 // Serve the assets directory
 app.use('/assets',express.static('assets'))
+app.use('/js', express.static('js'))
 
 // Listen on port 5000
 app.set('port', (process.env.PORT || 5000));
@@ -53,6 +54,7 @@ io.on('connection', function(socket){
       console.log("Player",socket.id,"is cheating!");
     }
     bullet_array.push(new_bullet);
+      
   });
 })
 
@@ -62,7 +64,7 @@ function ServerGameLoop(){
     var bullet = bullet_array[i];
     bullet.x += bullet.speed_x; 
     bullet.y += bullet.speed_y; 
-    
+    var hp = 100;
     // Check if this bullet is close enough to hit any player 
     for(var id in players){
       if(bullet.owner_id != id){
@@ -71,7 +73,14 @@ function ServerGameLoop(){
         var dy = players[id].y - bullet.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
         if(dist < 70){
-          io.emit('player-hit',id); // Tell everyone this player got hit
+          io.emit('player-hit',id);
+            bullet_array.splice(i, 1);
+            i--;
+            hp -= 20;
+            if(hp <= 0){
+                delete players[id];
+                io.emit('update-players', players);
+            }
         }
       }
     }

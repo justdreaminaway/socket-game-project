@@ -3,7 +3,7 @@
         <meta charset="UTF-8" />
         <title>Multiplayer Experiment</title>
         <!-- Load the Phaser game library -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.4.2/phaser.min.js"></script>
+        <script src="js/phaser.min.js"></script>
         <!-- Load the Socket.io networking library -->
         <script src="/socket.io/socket.io.js"></script>
 
@@ -30,7 +30,7 @@
 
             var WORLD_SIZE = {w:750,h:500};
           
-
+            
             var water_tiles = [];
             var bullet_array = [];
           
@@ -43,6 +43,7 @@
                 speed_y:0,
                 speed:0.5, // This is the parameter for how fast it should move 
                 friction:0.95,
+                health: 100,
                 shot:false,
                 update: function(){
                     // Lerp rotation towards mouse
@@ -215,15 +216,26 @@
                    }
                   
                 })
-              
                 // Listen for any player hit events and make that player flash 
                 socket.on('player-hit',function(id){
                     if(id == socket.id){
                         //If this is you
                         player.sprite.alpha = 0;
+                        player.health -= 20;
+                        if(player.health <= 0){
+                            //player.kill();
+                            player.sprite.destroy();
+                        }
                     } else {
                         // Find the right player 
                         other_players[id].alpha = 0;
+                        other_players[id].health -= 20;
+                        
+                        if(other_players[id].health <= 0){
+                            other_players[id].destroy();
+                            //delete other_players[id];
+                        }
+                        
                     }
                 })
 

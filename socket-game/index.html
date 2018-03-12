@@ -173,6 +173,7 @@
                             var data = players_data[id];
                             var p = CreateShip(data.type,data.x,data.y,data.angle);
                             other_players[id] = p;
+                            other_players[id].health = 100;
                             console.log("Created new player at (" + data.x + ", " + data.y + ")");
                         }
                         players_found[id] = true;
@@ -225,6 +226,7 @@
                         if(player.health <= 0){
                             //player.kill();
                             player.sprite.destroy();
+                            alert("You have died.");
                         }
                     } else {
                         // Find the right player 

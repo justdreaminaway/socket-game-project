@@ -17,7 +17,6 @@ app.set('port', (process.env.PORT || 5000));
 http.listen(app.get('port'), function(){
   console.log('listening on port',app.get('port'));
 });
-
 var players = {}; //Keeps a table of all players, the key is the socket id
 var bullet_array = []; // Keeps track of all the bullets to update them on the server 
 // Tell Socket.io to start accepting connections
@@ -26,6 +25,7 @@ io.on('connection', function(socket){
 	socket.on('new-player',function(state){
 		console.log("New player joined with state:",state);
 		players[socket.id] = state;
+        players[socket.id].health = 100;
 		// Broadcast a signal to everyone containing the updated players list
 		io.emit('update-players',players);
 	})
@@ -64,7 +64,6 @@ function ServerGameLoop(){
     var bullet = bullet_array[i];
     bullet.x += bullet.speed_x; 
     bullet.y += bullet.speed_y; 
-    var hp = 100;
     // Check if this bullet is close enough to hit any player 
     for(var id in players){
       if(bullet.owner_id != id){
@@ -76,8 +75,8 @@ function ServerGameLoop(){
           io.emit('player-hit',id);
             bullet_array.splice(i, 1);
             i--;
-            hp -= 20;
-            if(hp <= 0){
+            players[id].health -= 20;
+            if(players[id].health <= 0){
                 delete players[id];
                 io.emit('update-players', players);
             }

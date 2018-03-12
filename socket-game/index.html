@@ -22,13 +22,15 @@
     </head>
     <body>
         <script type="text/javascript">
+           
+            var map, layer, background;
             var ASSET_URL = "assets/player/rifle/idle/"
             //We first initialize the phaser game object
-            var WINDOW_WIDTH = 1280//750;
-            var WINDOW_HEIGHT = 720//500;
+            var WINDOW_WIDTH = 1344//750;
+            var WINDOW_HEIGHT = 896//500;
             var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, '', {preload:preload, create:create, update:GameLoop} );
 
-            var WORLD_SIZE = {w:1280,h:720};
+            var WORLD_SIZE = {w:1344,h:896};
           
             
             var water_tiles = [];
@@ -120,7 +122,7 @@
 
             function preload(){
                 game.load.crossOrigin = "Anonymous";
-                game.stage.backgroundColor = "#3399DA";
+                //game.stage.backgroundColor = "#3399DA";
                 
                 game.load.image('player', ASSET_URL + 'survivor-idle_rifle_0.png');
                 // Load all the ships
@@ -131,19 +133,38 @@
                     game.load.image('ship'+String(i) +'_4', ASSET_URL + 'ship'+String(i)+'_4.png');
                 }*/
                 game.load.image('bullet', ASSET_URL + 'cannon_ball.png');
-                game.load.image('water', ASSET_URL + 'grass-tile.jpg');
+               // game.load.image('water', ASSET_URL + 'grass-tile.jpg');
+                game.load.image('background', ASSET_URL + 'background.png');
+                game.load.image('foreground', ASSET_URL +'foreground.png');
             }
 
             function create(){
+               //  map = game.add.tilemap('map', 64, 64);
+
+                //Fullscreen
+	           //game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+	           //game.input.onDown.add(gofull, this);
+    
+               // map.addTilesetImage('dungeon_sheet', 'tiles');   
+
+           // layer = map.createLayer(0);
+	           //layer.setScale(4.5);
+               // layer.resizeWorld();
+    
+                //map.setCollisionBetween(1, 2000, true, 'layer');
+                background = game.add.sprite(0, 0, 'background');
+                background.scale.setTo(1.5);
+                foreground = game.add.sprite(0, 0, 'foreground');
+    foreground.scale.setTo(1.5);
                 // Create water tiles 
-                for(var i=0;i<=WORLD_SIZE.w/64+1;i++){
+                /*for(var i=0;i<=WORLD_SIZE.w/64+1;i++){
                     for(var j=0;j<=WORLD_SIZE.h/64+1;j++){
                         var tile_sprite = game.add.sprite(i * 64, j * 64, 'water');
                         tile_sprite.anchor.setTo(0.5,0.5);
                         tile_sprite.alpha = 0.5;
                         water_tiles.push(tile_sprite);
                     }
-                }
+                }*/
 
                 game.stage.disableVisibilityChange = true;
 

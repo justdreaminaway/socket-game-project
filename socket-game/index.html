@@ -24,11 +24,11 @@
         <script type="text/javascript">
             var ASSET_URL = "assets/player/rifle/idle/"
             //We first initialize the phaser game object
-            var WINDOW_WIDTH = 750;
-            var WINDOW_HEIGHT = 500;
+            var WINDOW_WIDTH = 1280//750;
+            var WINDOW_HEIGHT = 720//500;
             var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, '', {preload:preload, create:create, update:GameLoop} );
 
-            var WORLD_SIZE = {w:750,h:500};
+            var WORLD_SIZE = {w:1280,h:720};
           
             
             var water_tiles = [];
@@ -130,7 +130,6 @@
                     game.load.image('ship'+String(i) +'_3', ASSET_URL + 'ship'+String(i)+'_3.png');
                     game.load.image('ship'+String(i) +'_4', ASSET_URL + 'ship'+String(i)+'_4.png');
                 }*/
-                
                 game.load.image('bullet', ASSET_URL + 'cannon_ball.png');
                 game.load.image('water', ASSET_URL + 'grass-tile.jpg');
             }
@@ -225,6 +224,7 @@
                         player.health -= 20;
                         if(player.health <= 0){
                             //player.kill();
+                            game.add.sprite( player.sprite.x, player.sprite.y , 'bullet');
                             player.sprite.destroy();
                             alert("You have died.");
                         }
@@ -234,6 +234,7 @@
                         other_players[id].health -= 20;
                         
                         if(other_players[id].health <= 0){
+                            game.add.sprite( other_players[id].target_x, other_players[id].target_y, 'bullet');
                             other_players[id].destroy();
                             //delete other_players[id];
                         }

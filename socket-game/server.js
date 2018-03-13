@@ -11,6 +11,7 @@ app.get("/", function (request, response) {
 // Serve the assets directory
 app.use('/assets',express.static('assets'))
 app.use('/js', express.static('js'))
+app.use('/misc', express.static('misc'))
 
 // Listen on port 5000
 app.set('port', (process.env.PORT || 5000));
@@ -19,6 +20,7 @@ http.listen(app.get('port'), function(){
 });
 var players = {}; //Keeps a table of all players, the key is the socket id
 var bullet_array = []; // Keeps track of all the bullets to update them on the server 
+var tilevalue = false;
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket){
 	// Listen for a new player trying to connect
@@ -56,6 +58,13 @@ io.on('connection', function(socket){
     bullet_array.push(new_bullet);
       
   });
+    
+  /*socket.on('check-tile', function(tile_data){
+        if(tile_data.tileval == true){
+          console.log("HAHA");
+        tilevalue = tile_data.tileval;
+        }
+  });*/
 })
 
 // Update the bullets 60 times per frame and send updates 
@@ -85,11 +94,15 @@ function ServerGameLoop(){
     }
     
     // Remove if it goes too far off screen 
-    if(bullet.x < -10 || bullet.x > 1290 || bullet.y < -10 || bullet.y > 1000){
+    if(bullet.x < -10 || bullet.x > 1366 || bullet.y < -10 || bullet.y > 1000){
         bullet_array.splice(i,1);
         i--;
     }
-        
+    /*if(tilevalue == true){
+        console.log("DESTROYED.");
+        bullet_array.splice(i, 1);
+    }
+    tileval = false;  */  
   }
   // Tell everyone where all the bullets are by sending the whole array
   io.emit("bullets-update",bullet_array);

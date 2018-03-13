@@ -28,11 +28,11 @@
             //We first initialize the phaser game object
             var WINDOW_WIDTH = 1344//750;
             var WINDOW_HEIGHT = 896//500;
-            var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, '', {preload:preload, create:create, update:GameLoop} );
+            var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, '', {preload:preload, create:create, update:GameLoop, render: render} );
 
             var WORLD_SIZE = {w:1344,h:896};
           
-            
+            var tile_val = false;
             var water_tiles = [];
             var bullet_array = [];
           
@@ -62,20 +62,28 @@
                         /*this.speed_x += Math.cos(this.sprite.rotation + Math.PI/2) * this.speed;
                         this.speed_y += Math.sin(this.sprite.rotation + Math.PI/2) * this.speed;
                         */
-                        this.speed_y = -1.3;
-                    }if(game.input.keyboard.isDown(Phaser.Keyboard.S) || game.input.keyboard.isDown(Phaser.Keyboard.DOWN)){
-                        this.speed_y = 1.3;
+                        this.sprite.body.velocity.y = -90;
+                    }else if(game.input.keyboard.isDown(Phaser.Keyboard.S) || game.input.keyboard.isDown(Phaser.Keyboard.DOWN)){
+                        //this.speed_y = 1.3;
+                        this.sprite.body.velocity.y = 90;
+                    }else{
+                        this.sprite.body.velocity.y = 0;
                     }if(game.input.keyboard.isDown(Phaser.Keyboard.A) || game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
-                        this.speed_x = -1.3;
-                    }if(game.input.keyboard.isDown(Phaser.Keyboard.D) || game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
-                        this.speed_x = 1.3;
+                        //this.speed_x = -1.3;
+                        this.sprite.body.velocity.x = -90;
+                    }else if(game.input.keyboard.isDown(Phaser.Keyboard.D) || game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)){
+                        this.sprite.body.velocity.x = 90;
+                    }else{
+                        this.sprite.body.velocity.x = 0;
                     }
                     
-                    this.sprite.x += this.speed_x;
-                    this.sprite.y += this.speed_y;
-
-                    this.speed_x *= this.friction;
-                    this.speed_y *= this.friction;
+                   // this.sprite.x = this.sprite.body.x;
+                    //this.sprite.y = this.sprite.body.y;
+                    
+                   // this.sprite.body.velocity.x *= this.friction;
+                    //this.sprite.body.velocity.y *= this.friction;
+                    //this.speed_x *= this.friction;
+                    //this.speed_y *= this.friction;
 
                     // Shoot bullet 
                     if(game.input.activePointer.leftButton.isDown && !this.shot){
@@ -88,6 +96,7 @@
                         bullet.sprite = game.add.sprite(this.sprite.x + bullet.speed_x,this.sprite.y + bullet.speed_y,'bullet');
                         bullet_array.push(bullet); 
                         */
+                       // game.physics.enable(bullet_array, Phaser.Physics.ARCADE);
                         this.shot = true;
                         // Tell the server we shot a bullet 
                         socket.emit('shoot-bullet',{x:this.sprite.x,y:this.sprite.y,angle:this.sprite.rotation,speed_x:speed_x,speed_y:speed_y})
@@ -123,7 +132,8 @@
             function preload(){
                 game.load.crossOrigin = "Anonymous";
                 //game.stage.backgroundColor = "#3399DA";
-                
+                game.load.tilemap('map', 'misc/Map_walls.csv', null, Phaser.Tilemap.CSV);
+                //game.load.image('tiles', ASSET_URL + 'wall.png');
                 game.load.image('player', ASSET_URL + 'survivor-idle_rifle_0.png');
                 // Load all the ships
                /* for(var i=1;i<=6;i++){
@@ -136,26 +146,28 @@
                // game.load.image('water', ASSET_URL + 'grass-tile.jpg');
                 game.load.image('background', ASSET_URL + 'background.png');
                 game.load.image('foreground', ASSET_URL +'foreground.png');
+                //game.load.tile
             }
 
             function create(){
-               //  map = game.add.tilemap('map', 64, 64);
-
+                 //game.physics.startSystem(Phaser.Physics.ARCADE);
+                 map = game.add.tilemap('map', 64, 64);
+                
                 //Fullscreen
 	           //game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 	           //game.input.onDown.add(gofull, this);
     
-               // map.addTilesetImage('dungeon_sheet', 'tiles');   
+               // map.addTilesetImage('wall', 'tiles');   
 
-           // layer = map.createLayer(0);
-	           //layer.setScale(4.5);
-               // layer.resizeWorld();
-    
-                //map.setCollisionBetween(1, 2000, true, 'layer');
+               layer = map.createLayer(0);
+	           layer.setScale(1);
+                layer.resizeWorld();
+                game.physics.enable(layer, Phaser.Physics.ARCADE);
+                //map.setCollision(0);
+                map.setCollisionBetween(0, 2000, true, 'layer');
                 background = game.add.sprite(0, 0, 'background');
-                background.scale.setTo(1.5);
-                foreground = game.add.sprite(0, 0, 'foreground');
-    foreground.scale.setTo(1.5);
+                //background.scale.setTo(1.5);
+    //foreground.scale.setTo(1.5);
                 // Create water tiles 
                 /*for(var i=0;i<=WORLD_SIZE.w/64+1;i++){
                     for(var j=0;j<=WORLD_SIZE.h/64+1;j++){
@@ -171,13 +183,18 @@
                 // Create player
                /* var player_ship_type = String(1);
                 player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'ship'+player_ship_type+'_1');*/
-                player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'player');
                 
+            //player
+                player.sprite = game.add.sprite(Math.random() * WORLD_SIZE.w/2 + WORLD_SIZE.w/2,Math.random() * WORLD_SIZE.h/2 + WORLD_SIZE.h/2,'player');
                 player.sprite.anchor.setTo(0.5,0.5);
-               
-
+                game.physics.enable(player.sprite, Phaser.Physics.ARCADE);
+                player.sprite.body.immovable = true;
+                player.sprite.body.collideWorldBounds = true;
+                player.sprite.body.setSize(60, 60, 8, 20);
                 game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
-
+                
+                foreground = game.add.sprite(0, 0, 'foreground');
+                
                 game.camera.x = player.sprite.x - WINDOW_WIDTH/2;
                 game.camera.y = player.sprite.y - WINDOW_HEIGHT/2;
 
@@ -216,13 +233,27 @@
                     }
                    
                 })
-              
+                
+                /*for(var i = 0; i < 21; i++){
+                    for(var j = 0; j < 14; j++){
+                        tile_val = map.hasTile(i, j, layer);
+                        if(tile_val == true){
+                            socket.emit('check-tile', {tileval: tile_val})
+                        }
+                        tile_val == false;
+                    }
+                    j = 0;
+                }*/
+                
+               //game.physics.enable(bullet_array, Phaser.Physics.ARCADE);
                 // Listen for bullet update events 
                 socket.on('bullets-update',function(server_bullet_array){
                   // If there's not enough bullets on the client, create them
                  for(var i=0;i<server_bullet_array.length;i++){
                       if(bullet_array[i] == undefined){
                           bullet_array[i] = game.add.sprite(server_bullet_array[i].x,server_bullet_array[i].y,'bullet');
+                          //game.physics.enable(bullet_array[i], Phaser.Physics.ARCADE);
+                         
                       } else {
                           //Otherwise, just update it! 
                           bullet_array[i].x = server_bullet_array[i].x; 
@@ -246,7 +277,7 @@
                         if(player.health <= 0){
                             //player.kill();
                             game.add.sprite( player.sprite.x, player.sprite.y , 'bullet');
-                            player.sprite.destroy();
+                            player.sprite.kill();
                             alert("You have died.");
                         }
                     } else {
@@ -273,7 +304,9 @@
                 var camera_y = player.sprite.y - WINDOW_HEIGHT/2;
                 game.camera.x += (camera_x - game.camera.x) * 0.08;
                 game.camera.y += (camera_y - game.camera.y) * 0.08;
-              
+                
+                game.physics.arcade.collide(player.sprite, layer);
+               // game.physics.arcade.collide(bullet_array, layer);
                 // Each player is responsible for bringing their alpha back up on their own client 
                 // Make sure other players flash back to alpha = 1 when they're hit 
                 for(var id in other_players){
@@ -315,8 +348,15 @@
                 */
 
             }
+            function render(){
+               // game.debug.body(player.sprite);
+                //game.debug.body(layer);
+                //game.debug.body(bullet_array);
+            }
+            function hit(){
+                
+            }
             
-
         </script>
 
     </body>

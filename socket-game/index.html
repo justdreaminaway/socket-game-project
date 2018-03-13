@@ -32,7 +32,7 @@
 
             var WORLD_SIZE = {w:1344,h:896};
           
-            var tile_val = false;
+            //var tile_val = ;
             var water_tiles = [];
             var bullet_array = [];
           
@@ -234,16 +234,16 @@
                    
                 })
                 
-                /*for(var i = 0; i < 21; i++){
+                for(var i = 0; i < 21; i++){
                     for(var j = 0; j < 14; j++){
-                        tile_val = map.hasTile(i, j, layer);
-                        if(tile_val == true){
+                        tile_val = map.getTile(i, j, layer, true).index;
+                        if(tile_val == 0){
                             socket.emit('check-tile', {tileval: tile_val})
                         }
-                        tile_val == false;
+                        tile_val == -1;
                     }
                     j = 0;
-                }*/
+                }
                 
                //game.physics.enable(bullet_array, Phaser.Physics.ARCADE);
                 // Listen for bullet update events 
@@ -349,9 +349,10 @@
 
             }
             function render(){
-               // game.debug.body(player.sprite);
+                game.debug.body(player.sprite);
                 //game.debug.body(layer);
                 //game.debug.body(bullet_array);
+                game.debug.spriteCoords(player.sprite);
             }
             function hit(){
                 

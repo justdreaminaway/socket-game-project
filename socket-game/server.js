@@ -20,7 +20,7 @@ http.listen(app.get('port'), function(){
 });
 var players = {}; //Keeps a table of all players, the key is the socket id
 var bullet_array = []; // Keeps track of all the bullets to update them on the server 
-var tilevalue = false;
+var tilevalue = -1;
 // Tell Socket.io to start accepting connections
 io.on('connection', function(socket){
 	// Listen for a new player trying to connect
@@ -59,9 +59,9 @@ io.on('connection', function(socket){
       
   });
     
-  /*socket.on('check-tile', function(tile_data){
-        if(tile_data.tileval == true){
-          console.log("HAHA");
+   /*socket.on('check-tile', function(tile_data){
+        if(tile_data.tileval == 0){
+          console.log("pisti");
         tilevalue = tile_data.tileval;
         }
   });*/
@@ -94,15 +94,21 @@ function ServerGameLoop(){
     }
     
     // Remove if it goes too far off screen 
-    if(bullet.x < -10 || bullet.x > 1366 || bullet.y < -10 || bullet.y > 1000){
+    if(bullet.x < 64 || bullet.x > 1280 || bullet.y < 64 || bullet.y > 830 || bullet.x >= 894 && bullet.x <= 954 && bullet.y < 180 ||
+      bullet.y < 700 && bullet.x > 1090 && bullet.x < 1140 || bullet.y > 387 && bullet.x > 890 && bullet.x < 955 || bullet.y < 640 &&
+      bullet.x < 760 && bullet.x > 699 || bullet.y < 640 && bullet.y > 580 && bullet.x < 699 && bullet.x > 569 || bullet.y > 510 &&
+      bullet.x < 445 && bullet.x > 384 || bullet.y < 315 && bullet.x < 445 && bullet.x > 384 || bullet.y > 320 && bullet.x < 252 &&
+      bullet.x > 180 || bullet.y < 120 && bullet.x > 185 && bullet.x < 250){
         bullet_array.splice(i,1);
         i--;
     }
-    /*if(tilevalue == true){
+      
+    /*if(tilevalue == 0){
         console.log("DESTROYED.");
         bullet_array.splice(i, 1);
+        i--;
     }
-    tileval = false;  */  
+    tileval = -1;*/
   }
   // Tell everyone where all the bullets are by sending the whole array
   io.emit("bullets-update",bullet_array);

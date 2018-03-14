@@ -5,7 +5,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http); 
 const MongoClient = require('mongodb').MongoClient;
 
-var uri = "mongodb://admin:admin@ds113179.mlab.com:13179/it3202-final?authMode=scram-sha1";
+var uri = "mongodb://admin:admin@ds159997.mlab.com:59997/it3204-midterm";
 var db;
 
 // Serve the assets directory
@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({
 // Connect to MongoDB
 MongoClient.connect(uri, (err, database) => {
     if (err) return console.log(err);
-    db = database.db('scoreboard');
+    db = database.db('scores');
     
     // Listen to port 5000
     app.set('port', (process.env.PORT || 5000));
@@ -36,12 +36,11 @@ app.get("/", (request, response) => {
 });
 
 app.post("/sendScore", (req, res) => {
-    db.collection('scoreboard').insertOne(req.body, (err, result) => {
+    db.collection('scores').insertOne(req.body, (err, result) => {
         if (err) return console.log(err)
 
         //console.log(req.playerName+"'s score is saved.")
     })
-    
 })
 
 

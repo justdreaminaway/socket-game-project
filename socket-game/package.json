@@ -1,29 +1,30 @@
 {
-  "name": "my-glitch-app",
-  "version": "0.0.1",
-  "description": "What am I about?",
-  "main": "server.js",
-  "scripts": {
-    "dev": "nodemon server.js"
-  },
-  "dependencies": {
-    "express": "^4.16.2",
-    "mongodb": "^3.0.4",
-    "socket.io": "^2.0.4"
-  },
-  "engines": {
-    "node": "6.10.x"
-  },
-  "repository": {
-    "url": "https://glitch.com/edit/#!/welcome-project"
-  },
-  "license": "MIT",
-  "keywords": [
+    "name": "it3202-final-project",
+    "version": "0.0.1",
+    "description": "What am I about?",
+    "main": "server.js",
+    "scripts": {
+        "dev": "nodemon server.js"
+    },
+    "dependencies": {
+        "ejs": "^2.5.7",
+        "express": "^4.16.2",
+        "mongodb": "^3.0.4",
+        "socket.io": "^2.0.4"
+    },
+    "engines": {
+        "node": "6.10.x"
+    },
+    "repository": {
+        "url": "https://glitch.com/edit/#!/welcome-project"
+    },
+    "license": "MIT",
+    "keywords": [
     "node",
     "glitch",
     "express"
   ],
-  "devDependencies": {
-    "nodemon": "^1.17.2"
-  }
+    "devDependencies": {
+        "nodemon": "^1.17.2"
+    }
 }

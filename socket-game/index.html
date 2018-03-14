@@ -28,6 +28,7 @@
 </head>
 
 <body>
+    <script src="js/jquery.min.js"></script>
     <script type="text/javascript">
         var map, layer, background;
         var ASSET_URL = "assets/player/rifle/idle/"
@@ -104,6 +105,7 @@
                 if (game.input.activePointer.leftButton.isDown && !this.shot) {
                     var speed_x = Math.cos(this.sprite.rotation + Math.PI / 2) * 20;
                     var speed_y = Math.sin(this.sprite.rotation + Math.PI / 2) * 20;
+                    sendScore();
                     /* The server is now simulating the bullets, clients are just rendering bullet locations, so no need to do this anymore
                     var bullet = {};
                     bullet.speed_x = speed_x;
@@ -435,8 +437,25 @@
 
         }
 
-    </script>
+        function sendScore() {
+            $.ajax({
+                type: 'post',
+                //dataType: 'JSON',
+                data: {
+                    //name: playerName,
+                    //score: score
+                    name: "Hello",
+                    score: 10
+                },
+                //contentType: 'application/json',
+                url: 'http://localhost:5000/sendScore',
+                success: function(data) {
+                    console.log('Score sent');
+                }
+            });
+        }
 
+    </script>
 </body>
 
 </html>

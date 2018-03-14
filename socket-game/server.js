@@ -1,37 +1,65 @@
-var express = require('express'); // Express contains some boilerplate to for routing and such
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http); // Here's where we include socket.io as a node module 
-var MongoClient = require('mongodb').MongoClient;
+const express = require('express'); 
+const app = express();
+const bodyParser = require('body-parser');
+const http = require('http').Server(app);
+const io = require('socket.io')(http); 
+const MongoClient = require('mongodb').MongoClient;
 
-var uri = "mongodb://<dbuser>:<dbpassword>@ds113179.mlab.com:13179/it3202-final";
+var uri = "mongodb://admin:admin@ds113179.mlab.com:13179/it3202-final?authMode=scram-sha1";
 var db;
 
+// Serve the assets directory
+app.use('/assets', express.static('assets'));
+app.use('/js', express.static('js'));
+app.use('/misc', express.static('misc'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+//app.set('view engine', 'ejs');
+
+// Connect to MongoDB
 MongoClient.connect(uri, (err, database) => {
-    if(err) return console.log(err);
+    if (err) return console.log(err);
     db = database.db('scoreboard');
+    
+    // Listen to port 5000
+    app.set('port', (process.env.PORT || 5000));
+    http.listen(app.get('port'), function () {
+        console.log('listening on port', app.get('port'));
+    });
 })
 
 // Serve the index page 
-app.get("/", function (request, response) {
+app.get("/", (request, response) => {
     response.sendFile(__dirname + '/index.html');
 });
 
-// Serve the assets directory
-app.use('/assets', express.static('assets'))
-app.use('/js', express.static('js'))
-app.use('/misc', express.static('misc'))
+app.post("/sendScore", (req, res) => {
+    db.collection('scoreboard').insertOne(req.body, (err, result) => {
+        if (err) return console.log(err)
+
+        //console.log(req.playerName+"'s score is saved.")
+    })
+    
+})
+
+
 
 // Listen on port 5000
+
+/*
 app.set('port', (process.env.PORT || 5000));
 http.listen(app.get('port'), function () {
     console.log('listening on port', app.get('port'));
 });
+*/
+
 var players = {}; //Keeps a table of all players, the key is the socket id
 var bullet_array = []; // Keeps track of all the bullets to update them on the server 
 var tilevalue = -1;
 // Tell Socket.io to start accepting connections
-io.on('connection', function (socket) {
+io.on('connection', (socket) => {
     // Listen for a new player trying to connect
     socket.on('new-player', function (state) {
         console.log("New player joined with state:", state);
@@ -78,12 +106,12 @@ io.on('connection', function (socket) {
 
 var bullet;
 
-function didBulletHitWalls(){
+function didBulletHitWalls() {
     return (bullet.x < 64 || bullet.x > 1280 || bullet.y < 64 || bullet.y > 830 || bullet.x >= 894 && bullet.x <= 954 && bullet.y < 180 ||
-            bullet.y < 700 && bullet.x > 1090 && bullet.x < 1140 || bullet.y > 387 && bullet.x > 890 && bullet.x < 955 || bullet.y < 640 &&
-            bullet.x < 760 && bullet.x > 699 || bullet.y < 640 && bullet.y > 580 && bullet.x < 699 && bullet.x > 569 || bullet.y > 510 &&
-            bullet.x < 445 && bullet.x > 384 || bullet.y < 315 && bullet.x < 445 && bullet.x > 384 || bullet.y > 320 && bullet.x < 252 &&
-            bullet.x > 180 || bullet.y < 120 && bullet.x > 185 && bullet.x < 250) ? true : false;
+        bullet.y < 700 && bullet.x > 1090 && bullet.x < 1140 || bullet.y > 387 && bullet.x > 890 && bullet.x < 955 || bullet.y < 640 &&
+        bullet.x < 760 && bullet.x > 699 || bullet.y < 640 && bullet.y > 580 && bullet.x < 699 && bullet.x > 569 || bullet.y > 510 &&
+        bullet.x < 445 && bullet.x > 384 || bullet.y < 315 && bullet.x < 445 && bullet.x > 384 || bullet.y > 320 && bullet.x < 252 &&
+        bullet.x > 180 || bullet.y < 120 && bullet.x > 185 && bullet.x < 250) ? true : false;
 }
 
 // Update the bullets 60 times per frame and send updates 

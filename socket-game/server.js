@@ -2,6 +2,15 @@ var express = require('express'); // Express contains some boilerplate to for ro
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http); // Here's where we include socket.io as a node module 
+var MongoClient = require('mongodb').MongoClient;
+
+var uri = "mongodb://<dbuser>:<dbpassword>@ds113179.mlab.com:13179/it3202-final";
+var db;
+
+MongoClient.connect(uri, (err, database) => {
+    if(err) return console.log(err);
+    db = database.db('scoreboard');
+})
 
 // Serve the index page 
 app.get("/", function (request, response) {

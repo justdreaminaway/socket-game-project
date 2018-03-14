@@ -5,7 +5,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http); 
 const MongoClient = require('mongodb').MongoClient;
 
-var uri = "mongodb://admin:admin@ds159997.mlab.com:59997/it3204-midterm";
+var uri = "mongodb://admin:admin@it-3202-shard-00-00-esgsc.mongodb.net:27017,it-3202-shard-00-01-esgsc.mongodb.net:27017,it-3202-shard-00-02-esgsc.mongodb.net:27017/test?ssl=true&replicaSet=IT-3202-shard-0&authSource=admin";
 var db;
 
 // Serve the assets directory
@@ -39,7 +39,7 @@ app.post("/sendScore", (req, res) => {
     db.collection('scores').insertOne(req.body, (err, result) => {
         if (err) return console.log(err)
 
-        //console.log(req.playerName+"'s score is saved.")
+        console.log(req.body)
     })
 })
 

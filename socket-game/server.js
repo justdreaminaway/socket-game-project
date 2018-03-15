@@ -35,6 +35,7 @@ app.get("/", (request, response) => {
     response.sendFile(__dirname + '/index.html');
 });
 
+// http://localhost:5000/sendScore
 app.post("/sendScore", (req, res) => {
     db.collection('scores').insertOne(req.body, (err, result) => {
         if (err) return console.log(err)

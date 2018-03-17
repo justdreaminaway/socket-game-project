@@ -50,6 +50,7 @@
         var name1 = "<%= name.name%>";
         var score = 0;
         var score2 = 0;
+        var playscore = 15;
         console.log("My name is :" +name1);
         var WORLD_SIZE = {
             w: 1344,
@@ -374,7 +375,8 @@
                     //If this is you
                     player.sprite.alpha = 0;
                     player.health -= 20;
-                   
+                    player.score -= 2;
+                     playscore = player.score;
                     if (player.health <= 0) {
                         //player.kill();
                         var dead = deadGroup.create(player.sprite.x-13, player.sprite.y, 'corpse');
@@ -382,15 +384,16 @@
                         dead.animations.play('idle');
                         dead.scale.setTo(1.5);
                        // game.add.sprite(player.sprite.x, player.sprite.y, 'bullet');
+                        sendScore();
                         player.sprite.kill();
-                        game.add.sprite(200,300, 'gameover')
+                        game.add.sprite(200,300, 'gameover');
                         //alert("You have died.");
                     }
                 } else {
                     // Find the right player 
                     other_players[id].alpha = 0;
                     other_players[id].health -= 20;
-                    other_players[id].score -= 3;
+                    other_players[id].score -= 2;
                      var emitter = game.add.emitter(other_players[id].target_x, other_players[id].target_y, 20);
                     emitter.makeParticles('levelParticle');
                     emitter.minParticleSpeed.setTo(-100, -100);
@@ -399,8 +402,8 @@
                     emitter.start(true, 800, null, 150);
 
                     if (other_players[id].health <= 0) {
-                            player.score+=10;
-                        
+                        player.score+=10;
+                        playscore = player.score;
                         var dead = deadGroup.create(other_players[id].target_x-13, other_players[id].target_y+13, 'corpse');
                         dead.animations.add('idle', [0,1,2,3,4,5], 5);
                         dead.animations.play('idle');
@@ -419,7 +422,7 @@
 
         function GameLoop() {
             player.update();
-            text2.text = "Score: " +player.score;
+            text2.text = "Score: " +playscore;
             // Move camera with player 
             var camera_x = player.sprite.x - WINDOW_WIDTH / 2;
             var camera_y = player.sprite.y - WINDOW_HEIGHT / 2;

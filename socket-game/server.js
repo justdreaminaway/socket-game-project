@@ -96,7 +96,7 @@ app.post("/game", (request, response) => {
         console.log(req.body)
     })
 })*/
-app.put('/sendScore', (req, res) => {
+app.post('/sendScore', (req, res) => {
   db.collection('scores')
   .findOneAndUpdate({name: req.body.name}, {
     $set: {
@@ -131,6 +131,7 @@ io.on('connection', (socket) => {
         console.log("New player joined with state:", state);
         players[socket.id] = state;
         players[socket.id].health = 100;
+        players[socket.id].score = 15;
         // Broadcast a signal to everyone containing the updated players list
         io.emit('update-players', players);
     })
@@ -198,6 +199,7 @@ function ServerGameLoop() {
                     bullet_array.splice(i, 1);
                     i--;
                     players[id].health -= 20;
+                    players[id].score -= 2;
                     if (players[id].health <= 0) {
                         delete players[id];
                         io.emit('update-players', players);

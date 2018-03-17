@@ -55,7 +55,8 @@ app.get("/score", (request, response) => {
     // response.sendFile(__dirname + '/ranking.html');
     var mysort = { score: -1 };
   db.collection('scores').find().sort(mysort).toArray((err, result) => {
-    if (err) return console.log(err)
+    if (err) 
+    return console.log(err)
     // renders index.ejs
     response.render('ranking.ejs', {scores: result})
   })

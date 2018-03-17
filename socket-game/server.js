@@ -9,14 +9,22 @@ var uri = "mongodb://admin:admin@it-3202-shard-00-00-esgsc.mongodb.net:27017,it-
 var db;
 
 // Serve the assets directory
+//ar engines = require('consolidate');
+
+//app.set('views', __dirname + '/views');
+//app.engine('html', engines.mustache);
+//app.set('view engine', 'html');
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use('/views', express.static('views'));
 app.use('/assets', express.static('assets'));
+app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 app.use('/misc', express.static('misc'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-//app.set('view engine', 'ejs');
+app.set('view engine', 'html');
 
 // Connect to MongoDB
 MongoClient.connect(uri, (err, database) => {
@@ -32,18 +40,76 @@ MongoClient.connect(uri, (err, database) => {
 
 // Serve the index page 
 app.get("/", (request, response) => {
-    response.sendFile(__dirname + '/index.html');
+    response.sendFile(__dirname + '/menu.html');
+});
+app.get("/howtoplay", (request, response) => {
+    response.sendFile(__dirname + '/how-to-play.html');
+});
+app.get("/play", (request, response) => {
+    response.sendFile(__dirname + '/enter_name.html');
+});
+app.get("/back", (request, response) => {
+    response.sendFile(__dirname + '/menu.html');
+});
+app.get("/score", (request, response) => {
+    // response.sendFile(__dirname + '/ranking.html');
+    var mysort = { score: -1 };
+  db.collection('scores').find().sort(mysort).toArray((err, result) => {
+    if (err) return console.log(err)
+    // renders index.ejs
+    response.render('ranking.ejs', {scores: result})
+  })
+
+    
+});
+app.post("/game", (request, response) => {
+    console.log(request.body.name);
+    db.collection('scores').find({name: request.body.name}).toArray((err, result) => {
+    if (result.length){
+        console.log("it already exists!!");
+    } else{
+           db.collection('scores').insertOne(request.body, (err, result) => {
+        if (err) return console.log(err)
+
+        console.log("Successfully Inserted")
+    })
+        
+    }
+      
+   // return console.log(err)
+    // renders index.ejs
+    
+  })
+   
+    
+    //response.sendFile(__dirname + '/index.html');
+    response.render('index.ejs',{
+        name:request.body.name
+    });
 });
 
 // http://localhost:5000/sendScore
-app.post("/sendScore", (req, res) => {
+/*app.post("/sendScore", (req, res) => {
     db.collection('scores').insertOne(req.body, (err, result) => {
         if (err) return console.log(err)
 
         console.log(req.body)
     })
+})*/
+app.put('/sendScore', (req, res) => {
+  db.collection('scores')
+  .findOneAndUpdate({name: req.body.name}, {
+    $set: {
+      score: req.body.score
+    }
+  }, {
+    sort: {_id: -1},
+    upsert: true
+  }, (err, result) => {
+    if (err) return res.send(err)
+    res.send(result)
+  })
 })
-
 
 
 // Listen on port 5000

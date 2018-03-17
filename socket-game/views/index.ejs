@@ -2,7 +2,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Multiplayer Experiment</title>
+    <title>Lock On</title>
     <!-- Load the Phaser game library -->
     <script src="js/phaser.min.js"></script>
     <!-- Load the Socket.io networking library -->
@@ -10,12 +10,16 @@
 
     <!-- Some simple styles and fonts -->
     <style type="text/css">
+         @font-face{
+			font-family:mana;
+			src: url("assets/menu/armalite.woff");
+		}
         body,
         html {
             /* Remove margins */
             margin: 0px;
             position: relative;
-            background-color: #9FC7E1;
+            background-color: #cea963;
         }
 
         canvas {
@@ -30,7 +34,9 @@
 <body>
     <script src="js/jquery.min.js"></script>
     <script type="text/javascript">
+       
         var map, layer, background;
+        var deadGroup;
         var ASSET_URL = "assets/player/rifle/idle/"
         //We first initialize the phaser game object
         var WINDOW_WIDTH = 1344 //750;
@@ -41,7 +47,10 @@
             update: GameLoop,
             render: render
         });
-
+        var name1 = "<%= name.name%>";
+        var score = 0;
+        var score2 = 0;
+        console.log("My name is :" +name1);
         var WORLD_SIZE = {
             w: 1344,
             h: 896
@@ -62,6 +71,7 @@
             friction: 0.95,
             health: 100,
             shot: false,
+            score: 15,
             update: function() {
                 // Lerp rotation towards mouse
                 var dx = (game.input.mousePointer.x + game.camera.x) - this.sprite.x;
@@ -70,6 +80,7 @@
                 var dir = (angle - this.sprite.rotation) / (Math.PI * 2);
                 dir -= Math.round(dir);
                 dir = dir * Math.PI * 2;
+                this.sprite.rotation += dir * 0.1;
                 this.sprite.rotation += dir * 0.1;
 
                 // Move forward
@@ -105,7 +116,7 @@
                 if (game.input.activePointer.leftButton.isDown && !this.shot) {
                     var speed_x = Math.cos(this.sprite.rotation + Math.PI / 2) * 20;
                     var speed_y = Math.sin(this.sprite.rotation + Math.PI / 2) * 20;
-                    sendScore();
+                    
                     /* The server is now simulating the bullets, clients are just rendering bullet locations, so no need to do this anymore
                     var bullet = {};
                     bullet.speed_x = speed_x;
@@ -158,7 +169,7 @@
 
         function preload() {
             game.load.crossOrigin = "Anonymous";
-            //game.stage.backgroundColor = "#3399DA";
+            //game.stage.backgroundColor = "#cea963";
             game.load.tilemap('map', 'misc/Map_walls.csv', null, Phaser.Tilemap.CSV);
             //game.load.image('tiles', ASSET_URL + 'wall.png');
             game.load.image('player', ASSET_URL + 'survivor-idle_rifle_0.png');
@@ -169,10 +180,13 @@
                  game.load.image('ship'+String(i) +'_3', ASSET_URL + 'ship'+String(i)+'_3.png');
                  game.load.image('ship'+String(i) +'_4', ASSET_URL + 'ship'+String(i)+'_4.png');
              }*/
-            game.load.image('bullet', ASSET_URL + 'cannon_ball.png');
+            game.load.image('bullet', 'assets/cannon_ball.png');
             // game.load.image('water', ASSET_URL + 'grass-tile.jpg');
-            game.load.image('background', ASSET_URL + 'background.png');
+            game.load.image('background', ASSET_URL + 'Map_2.png');
             game.load.image('foreground', ASSET_URL + 'foreground.png');
+            game.load.image('gameover','assets/menu/gameover_mil.png');
+            game.load.image('levelParticle', 'assets/menu/level-particle.png');
+            game.load.spritesheet('corpse', 'assets/menu/bloodsplatter1.png', 32, 32);
             //game.load.tile
         }
 
@@ -264,14 +278,15 @@
             game.world.setBounds(0, 0, WORLD_SIZE.w, WORLD_SIZE.h);
 
             foreground = game.add.sprite(0, 0, 'foreground');
-            var style = { font: "32px Arial", fill: "#ff0044", wordWrap: true, wordWrapWidth: 200, align: "center", backgroundColor: "#ffff00" };
-
-            text = game.add.text(0,0 , "test", style);
+            var style = { font: "14px Arial", fill: "yellow", wordWrap: true, wordWrapWidth: 200, align: "center",  };
+        
+            text = game.add.text(0,0 ,"<%=name%>", style);
             text.anchor.set(0.5);
-             //text2 = game.add.text(0,0 , "test", style);
-            //text2.anchor.set(0.5);
+            text2 = game.add.text(100,30 , "Score:"+score, {font: "40px Segoe UI Black", fill: "yellow", wordWrap: true, wordWrapWidth: 200, align: "center"} );
+            text2.anchor.set(0.5);
             game.camera.x = player.sprite.x - WINDOW_WIDTH / 2;
             game.camera.y = player.sprite.y - WINDOW_HEIGHT / 2;
+            deadGroup = game.add.group();
 
             socket = io(); // This triggers the 'connection' event on the server
             socket.emit('new-player', {
@@ -291,6 +306,7 @@
                         var p = CreateShip(data.type, data.x, data.y, data.angle);
                         other_players[id] = p;
                         other_players[id].health = 100;
+                        other_players[id].score = 15;
                         console.log("Created new player at (" + data.x + ", " + data.y + ")");
                     }
                     players_found[id] = true;
@@ -358,20 +374,41 @@
                     //If this is you
                     player.sprite.alpha = 0;
                     player.health -= 20;
+                   
                     if (player.health <= 0) {
                         //player.kill();
-                        game.add.sprite(player.sprite.x, player.sprite.y, 'bullet');
+                        var dead = deadGroup.create(player.sprite.x-13, player.sprite.y, 'corpse');
+                        dead.animations.add('idle', [0,1,2,3,4,5], 5);
+                        dead.animations.play('idle');
+                        dead.scale.setTo(1.5);
+                       // game.add.sprite(player.sprite.x, player.sprite.y, 'bullet');
                         player.sprite.kill();
-                        alert("You have died.");
+                        game.add.sprite(200,300, 'gameover')
+                        //alert("You have died.");
                     }
                 } else {
                     // Find the right player 
                     other_players[id].alpha = 0;
                     other_players[id].health -= 20;
+                    other_players[id].score -= 3;
+                     var emitter = game.add.emitter(other_players[id].target_x, other_players[id].target_y, 20);
+                    emitter.makeParticles('levelParticle');
+                    emitter.minParticleSpeed.setTo(-100, -100);
+                    emitter.maxParticleSpeed.setTo(100, 100);
+                    emitter.gravity = 0;
+                    emitter.start(true, 800, null, 150);
 
                     if (other_players[id].health <= 0) {
-                        game.add.sprite(other_players[id].target_x, other_players[id].target_y, 'bullet');
+                            player.score+=10;
+                        
+                        var dead = deadGroup.create(other_players[id].target_x-13, other_players[id].target_y+13, 'corpse');
+                        dead.animations.add('idle', [0,1,2,3,4,5], 5);
+                        dead.animations.play('idle');
+                        dead.scale.setTo(1.5);
+                        sendScore();
+                      // game.add.sprite(other_players[id].target_x, other_players[id].target_y, 'bullet');
                         other_players[id].destroy();
+                        
                         //delete other_players[id];
                     }
 
@@ -382,14 +419,14 @@
 
         function GameLoop() {
             player.update();
-
+            text2.text = "Score: " +player.score;
             // Move camera with player 
             var camera_x = player.sprite.x - WINDOW_WIDTH / 2;
             var camera_y = player.sprite.y - WINDOW_HEIGHT / 2;
             game.camera.x += (camera_x - game.camera.x) * 0.08;
             game.camera.y += (camera_y - game.camera.y) * 0.08;
-             text.x = Math.floor(player.sprite.x + 200 / 2);
-            text.y = Math.floor(player.sprite.y + 200 / 2);
+             text.x = Math.floor(player.sprite.x + 20 / 2);
+            text.y = Math.floor(player.sprite.y + 100 / 2);
 
             game.physics.arcade.collide(player.sprite, layer);
             // game.physics.arcade.collide(bullet_array, layer);
@@ -436,10 +473,10 @@
         }
 
         function render() {
-            game.debug.body(player.sprite);
+            //game.debug.body(player.sprite);
             //game.debug.body(layer);
             //game.debug.body(bullet_array);
-            game.debug.spriteCoords(player.sprite);
+            //game.debug.spriteCoords(player.sprite);
         }
 
         function hit() {
@@ -453,8 +490,8 @@
                 data: {
                     //name: playerName,
                     //score: score
-                    name: "Hello",
-                    score: 10
+                    name: "<%= name %>",
+                    score: player.score
                 },
                 //contentType: 'application/json',
                 url: 'http://localhost:5000/sendScore',

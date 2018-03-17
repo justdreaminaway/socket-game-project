@@ -1,0 +1,91 @@
+<html>
+<head>
+    <style>
+         @font-face{
+			font-family: mana;
+			src: url("assets/menu/veteran typewriter.woff");
+		}
+        .bg{
+ 	position: absolute;
+	top: -20px;
+	left: -20px;
+	right: -40px;
+	bottom: -40px;
+	width: auto;
+	height: auto;
+    background-image: url("assets/menu/military_bg.jpg");
+    background-size: cover;
+    /*-webkit-filter: blur(5px);*/
+	z-index: 0;
+     
+ }
+        .title{
+            position: absolute;
+            left: 40%;
+            /*top: 12%;*/
+        }
+        .play{
+           
+            position: absolute;
+            left: 44%;
+            top: 10%;
+            width:40%;
+            height:auto;
+        }
+        
+        
+      
+        .signout{
+            position: absolute;
+            width:18%;
+            left: 70%;
+            top: 50%;
+        }
+        .ranking{
+            position: absolute;
+            width:18%;
+            left: 30%;
+            top: 30%;
+        }
+         .howtoplay{
+            position: absolute;
+            width:28%;
+            left: 65%;
+            top: 30%;
+        }
+        .back{
+            position: absolute;
+            left: 2%;
+            top: 4%;
+           
+        }
+        .movement{
+            position: absolute;
+            font-family:mana ;
+            font-size: 30px;
+            color: #331803;
+            margin-top: 20%
+        }
+         html { overflow-y: hidden; overflow-x: hidden; }
+    </style>
+	<link rel = 'stylesheet' href ='css/bootstrap.min.css'>
+</head>
+<body>
+    <div class='bg'></div>
+    <div class="back"><a href="/back"><img src='assets/menu/Arrow-Left.png' style="width:30%;"></a></div>
+
+    <!--<div class='title'><img src='assets/menu/military_bg.jpg'></div>-->
+  
+    <div class="play"><img src='assets/menu/How_to_Play_mil.png' style="width:48%;"></div>
+    <div class="ranking"><img src='assets/menu/wasd.png'style="width:100%;"></div>
+    <div class="howtoplay"><img src='assets/menu/left-click.png'style="width:48%;"></div>
+   <!-- <div class="signout"><img src='assets/menu/keyboard_key_z.png'style="width:48%;"></div>-->
+    <div class ="movement" style="margin-left:50%;">To move</div>
+   
+    <div class ="movement" style="margin-left:80%;">For shooting</div>
+     <audio controls autoplay style=" width:200px; opacity:0; background-color: white;">
+ 			 <source src="audio/titletheme.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+</body>
+</html>

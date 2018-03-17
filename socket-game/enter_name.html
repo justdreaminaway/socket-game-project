@@ -1,0 +1,101 @@
+<html>
+<head>
+	<link rel = 'stylesheet' href ='css/bootstrap.min.css'>
+</head>
+<style>
+    @font-face{
+			font-family: mana;
+			src: url(assets/menu/ManaspaceReg.woff);
+		}
+ .bg{
+ 	position: absolute;
+	top: -20px;
+	left: -20px;
+	right: -40px;
+	bottom: -40px;
+	width: auto;
+	height: auto;
+    background-image: url("assets/menu/military_bg.jpg");
+    background-size: cover;
+    /**-webkit-filter: blur(5px);*/
+	z-index: 0;
+     
+ }
+ .Title{
+     position: absolute;
+     top: 30px;
+     margin-left:27%
+ }
+    .ranking{
+        position: absolute;
+        left: 45%;
+        bottom: 20%;
+        width:15%;
+    }
+    .back{
+            position: absolute;
+            left: 2%;
+            top: 4%;
+           
+        }
+     .howtoplay{
+            position: absolute;
+            width:25%;
+            left: 42%;
+            bottom:10%;
+        }
+html { overflow-y: hidden; overflow-x: hidden; }
+</style>
+<body style="padding:0%;">
+    <div class="bg">
+    </div>
+    <div class="back"><a href="/back"><img src='assets/menu/Arrow-Left.png' style="width:30%;"></a></div>
+    <!--<div class = "Title">
+        <img src="assets/otherimages/test2.png">
+    </div>-->
+	<div class = 'col-sm-4 col-sm-offset-4' style="margin-top:10%;">
+		<?php
+			if(isset($login) && $login == false){
+		?>
+		<!--<div class = 'alert alert-danger'>
+			<span class = "glyphicon glyphicon-exclamation-sign"></span>
+			Login Failed!
+		</div>-->
+		<?php
+			}
+		?>
+       
+			
+		<div class ='panel panel-success'style='border: 0px;'>
+			<div class = 'panel-heading' style='border: 0px; background: #9b660a; color:white;'>
+				<h2 class='panel-title' style="font-family:mana;">Register</h2>
+			</div>
+			<div class = 'panel-body' style='border: 0px; background: #9b660a;'>
+			<form method ='post' action='/game' autocomplete ='OFF'>
+                <p style='color:white; font-family:mana;'>Enter Name<p>
+				<input name='name' style="background: #cea963;border-color:#cea963;color: #9b660a;" type ='text' placeholder='Name' class ='form-control'>
+                <input name='score' style="background: #cea963;border-color:#cea963;color: #9b660a;" type ='hidden' placeholder='Name' class ='form-control' value="0">
+				<br>
+				
+
+				<button style= 'border: 0px; color: #9b660a; background:#cea963; border-color:#cea963; margin-top:15px;font-family:mana;' class = 'btn btn-success pull-right  '>ENTER</button>
+                
+			
+			</form>
+            <!--<form method ='POST' action='2playerregister.php' autocomplete ='OFF'>
+                <button style='border: 0px; color: #9b660a; background:#cea963;font-family:mana;' class = 'btn btn-success pull-left' method ='POST' action='studentForm.php' autocomplete ='OFF'>REGISTER</button>
+            </form> -->
+            
+			</div>
+		</div>
+        
+	</div>
+    <!--<div class="ranking"><a href="multiranking.php"><img src='assets/menu/Rank_small.png'style="width:58%;"></a></div>
+    <div class="howtoplay"><a href="Howtomenu.php"><img src='assets/menu/How_to_Play_small.png'style="width:58%;"></a></div>-->
+     <audio controls autoplay style=" width:200px; opacity:0; background-color: white;">
+ 			 <source src="audio/titletheme.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+    
+</body>
+</html>

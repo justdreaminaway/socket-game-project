@@ -1,0 +1,148 @@
+<html>
+<head>
+	<title>Game List</title>
+	<link rel='stylesheet' href='css/bootstrap.min.css'>
+</head>
+    
+<style>
+    .navbar-inverse{
+         background-color:#5cb85c;
+    }
+    .navbar-inverse .navbar-brand {
+    color: white;
+    }
+    .navbar-inverse .navbar-brand:hover,
+    .navbar-inverse .navbar-brand:focus {
+        color:#dff0d8;
+    }
+    .navbar-inverse .navbar-nav > li > a {
+    color: #dff0d8;
+    }
+    .navbar-inverse .navbar-nav > li > a:hover,
+    .navbar-inverse .navbar-nav > li > a:focus {
+    color: white;
+    }
+    .navbar-inverse .navbar-nav > .active > a, 
+    .navbar-inverse .navbar-nav > .active > a:hover, 
+    .navbar-inverse .navbar-nav > .active > a:focus {
+        color: white;
+        background-color:#dff0d8 ;
+    }
+    .navbar-inverse .navbar-nav > .open > a, 
+    .navbar-inverse .navbar-nav > .open > a:hover, 
+    .navbar-inverse .navbar-nav > .open > a:focus {
+        color: white;
+        background-color: #dff0d8;
+    }
+    .title{
+        background-color: #9b660a;
+        border-radius:0px ;
+        font-family: mana;
+        color: white;
+        
+    }
+    
+        .bg{
+ 	position: absolute;
+	top: -20px;
+	left: -20px;
+	right: -40px;
+	bottom: -40px;
+	width: auto;
+	height: auto;
+    background-image: url("assets/menu/military_bg.jpg");
+    background-size: cover;
+    /*-webkit-filter: blur(5px);*/
+	z-index: 0;
+     
+ }
+    .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+   border: 1px solid #9b660a;
+   
+}
+    .table{
+      
+        background-color: #91b09a;
+        margin-top: 100px;
+    }
+    .highscore{
+        color: #9b660a;
+        position: absolute;
+        left:550px;
+        
+    }
+     @font-face{
+			font-family: mana;
+			src: url(fonts/ManaspaceReg.woff);
+		}
+    .back{
+            position: absolute;
+            left: 2%;
+            top: 4%;
+           
+        }
+     html { overflow-y: hidden; overflow-x: hidden; }
+</style>
+<body>
+    <div class='bg'></div>
+    <div class="back"><a href="/back"><img src='assets/menu/Arrow-Left.png' style="width:30%;"></a></div>
+<!--<nav class="navbar navbar-inverse navbar-fixed-top "> 
+	<div class="container-fluid">
+		<div class="navbar-header"> 
+		<button type="button" class="collapsed navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-6" aria-expanded="false"> 
+		<span class="sr-only">Toggle navigation</span> 
+		<span class="icon-bar"></span> 
+		<span class="icon-bar"></span> 
+		<span class="icon-bar"></span> </button> 
+		<a href="#" class="navbar-brand" style="font-family:'Adobe Caslon Pro'; font-size: 23px;;">Howling Meadows</a> </div> 
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6"> 
+			<ul class="nav navbar-nav"> 
+				<li><a href="home.php">Home</a></li>
+			</ul>
+			
+		</div> 
+	</div> 
+</nav>-->
+<br><br><br>
+<div class="highscore">
+<h2 class = 'text-center' style="font-family:'mana';" style="position:absolute; top:30px; color: '#9b660a';">High Score Ranking</h2>
+    </div>
+<div class='container'>    
+    <div class = 'row'>
+        <div class ='col-sm-10 col-sm-offset-1'>
+            <table class = 'table table-bordered'>
+                <th class="title">Rank</th>
+                <th class="title">Name</th>
+                <th class="title">Score</th>
+         
+
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class ='modal fade myModal' tab-index ='-1' role = 'dialog'
+	aria -labelledby ='.myModal' >
+	    <div class = 'modal-dialog modal-sm' role = 'document'>
+	    	<div class ='modal-content'>
+	    		<p class = 'text-center'><strong>Name: </strong><span class ='mod_name' ></span></p>
+	    		<p class = 'text-center'><strong>Price: </strong><span class ='mod_price' ></span></p>
+	    		<p class = 'text-center'><strong>Description: </strong><span class ='mod_desc' ></span></p>
+	    		<p class = 'text-center'>
+					<img src = '#'style = 'width: 40%;' class ='img-thumbnail'>
+				</p>
+
+	    	</div>
+	    </div>
+	</div>
+  <audio controls autoplay style=" width:200px; opacity:0; background-color: white;">
+ 			 <source src="audio/titletheme.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+</body>
+</html>
+<script src='js/jquery.min.js'></script>
+<script src='js/bootstrap.min.js'></script>
+<script>
+<script>

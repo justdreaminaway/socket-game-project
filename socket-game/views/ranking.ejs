@@ -114,14 +114,16 @@
                 <th class="title">Rank</th>
                 <th class="title">Name</th>
                 <th class="title">Score</th>
-                <%var j%>
-                <% for(var i=0; i<scores.length; ++i) { j = i+1%>
+                <%var j = 0%>
+                <% for(var i=0; i<scores.length; ++i) { j += 1
+                        if(scores[i].score > 0){                                                   
+                %>
     <tr>
         <td><%= j%></td>
       <td><%= scores[i].name %></td>
       <td><%= scores[i].score %></td>
     </tr>
-  <% } %>
+  <% }} %>
 
                 
 
